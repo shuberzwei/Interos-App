@@ -6,10 +6,12 @@ class MyneButton extends JButton {
 
 	protected boolean hasBomb;
 	protected int proximity;
+	protected int id;
 	
-	MyneButton() {
+	MyneButton(int id) {
 		hasBomb = false;
 		proximity = 0;
+		this.id = id;
 		//TODO format buttons
 	}
 }
