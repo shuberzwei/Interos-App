@@ -1,5 +1,7 @@
 package app;
 
+import java.awt.Dimension;
+
 import javax.swing.JFrame;
 
 /**
@@ -14,26 +16,32 @@ public class MyneSweeper extends JFrame {
 	MyneSweeper(String difficulty) {
 		setData(difficulty);
 		setTitle("MyneSweeper");
-		setSize(Data.rows * 40, Data.cols * 40);//TODO fix sizes, fit panel neatly in frame
-		getContentPane().add(new MynePanel());
-		setResizable(false);//TODO, resize font and bombs dynamically
+		int frameWidth = Data.cols * 40;
+		int frameHeight = Data.rows * 40;
+		Dimension d = new Dimension(frameWidth, frameHeight);
+		setMinimumSize(d);
+		//TODO format panel size
+		getContentPane().add(new MynePanel(frameWidth));
+		
+		setResizable(false);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		pack();
 		setVisible(true);
 	}
-	
+	//TODO add menu, save, load, change difficulty
 	private void setData(String difficulty) {
-		if(difficulty.equals("easy")){
-			Data.rows = 8;
-			Data.cols = 8;
-			Data.numBombs = 10;
-		} else if(difficulty.equals("medium")) {
-			Data.rows = 16;
-			Data.cols = 16;
-			Data.numBombs = 40;
-		}else {
-			Data.rows = 24;
-			Data.cols = 24;
-			Data.numBombs = 100;
+		if(difficulty.startsWith("easy")) {
+			Data.rows = Data.easyRows;
+			Data.cols = Data.easyCols;
+			Data.numMines = Data.easyNumMines;
+		} else if(difficulty.startsWith("medium")) {
+			Data.rows = Data.medRows;
+			Data.cols = Data.medCols;
+			Data.numMines = Data.medNumMines;
+		} else {
+			Data.rows = Data.hardRows;
+			Data.cols = Data.hardCols;
+			Data.numMines = Data.hardNumMines;
 		}
 	}
 }
