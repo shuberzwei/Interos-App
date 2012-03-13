@@ -19,6 +19,7 @@ class MynePanel extends JPanel {
 		buttons = new MyneButton[Data.rows * Data.cols];
 		MyneButtonListener listener = new MyneButtonListener();
 		setLayout(new GridLayout(Data.rows, Data.cols));
+		//set panel size
 		Dimension d1 = new Dimension(dimension, dimension);
 		setMinimumSize(d1);
 		
@@ -26,6 +27,7 @@ class MynePanel extends JPanel {
 			buttons[i] = new MyneButton(i);
 			
 			//TODO format button size
+			//set button size
 			int buttonDimension = dimension / Data.cols;
 			Dimension d2 = new Dimension(buttonDimension, buttonDimension);
 			buttons[i].setMinimumSize(d2);
@@ -47,7 +49,6 @@ class MynePanel extends JPanel {
 			}
 			buttons[i].removeAll(); //remove proximity labels
 			buttons[i].setEnabled(true);
-			buttons[i].setBackground(null); //TODO
 		}
 	}
 	
@@ -57,5 +58,15 @@ class MynePanel extends JPanel {
 	 */
 	protected static MyneButton getButton(int id) {
 		return buttons[id];
+	}
+	
+	protected static String buttonsToString() {
+		String buttonString = "";
+		for(int i = 0; i < Data.rows * Data.cols; i++) {
+			buttonString += buttons[i].hasMine + " ";
+			buttonString += buttons[i].proximity + " ";
+			buttonString += buttons[i].isEnabled() + " ";
+		}
+		return buttonString;
 	}
 }

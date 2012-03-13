@@ -1,6 +1,5 @@
 package app;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -13,12 +12,20 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 class MyneButtonListener implements ActionListener{
-    private boolean isFirstClick;
-    private int numClicks;
+    private static boolean isFirstClick;
+    private static int numClicks;
 	
 	protected MyneButtonListener() {
 		isFirstClick = true;
 		numClicks = 0;
+	}
+
+	protected static boolean isFirstClick() {
+		return isFirstClick;
+	}
+
+	protected static int getNumClicks() {
+		return numClicks;
 	}
 	
 	@Override
@@ -87,7 +94,8 @@ class MyneButtonListener implements ActionListener{
 													null,
 													options,
 													options[2]);
-		if(answer != 1) { //if answer not "No"
+		// 0 new game  1 quit  2 replay game
+		if(answer != 1) {
 			if(answer == 0)
 				isFirstClick = true; //new game
 			else
@@ -97,7 +105,7 @@ class MyneButtonListener implements ActionListener{
 											JOptionPane.WARNING_MESSAGE);
 			numClicks = 0;
 			MynePanel p = (MynePanel) button.getParent();
-			p.resetButtons(answer);//TODO menu option to reset Data
+			p.resetButtons(answer);
 		}
 		else
 			System.exit(0);
@@ -110,7 +118,8 @@ class MyneButtonListener implements ActionListener{
 	 */
 	private void showProximity(MyneButton button) {
 		JLabel label = new JLabel("" + button.proximity);
-		label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));//TODO change size to match frame
+		int fontSize = 20;//TODO change size to match frame
+		label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, fontSize));
 		label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
 		label.setAlignmentY(JLabel.CENTER_ALIGNMENT);
 		
@@ -131,7 +140,7 @@ class MyneButtonListener implements ActionListener{
 	 * 
 	 * @param button
 	 */
-	private void depressButtons(MyneButton button) { //TODO does Minesweeper depress buttons on the diagonal?
+	private void depressButtons(MyneButton button) { //TODO depress buttons on the diagonal?
 		if(button.isEnabled()) {
 			button.setEnabled(false);
 			numClicks++;
@@ -203,10 +212,6 @@ class MyneButtonListener implements ActionListener{
 			MynePanel.getButton(buttonNum).hasMine = true;
 		}
 		for(int i = 0; i < Data.rows * Data.cols; i++) {
-			if(MynePanel.getButton(i).hasMine) {
-				
-				//MynePanel.getButton(i).setBackground(Color.GRAY);//TODO
-			}
 			if(!MynePanel.getButton(i).hasMine) { //calculate proximity for button i
 				 /*
 				  * i-1-cols  i-cols  i+1-cols

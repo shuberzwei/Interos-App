@@ -1,17 +1,23 @@
 package app;
 
 import java.applet.Applet;
+import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 
-/**
- * @author shuber2
- *
- */
 public class Driver extends Applet {
 	public static void main(String[] args) {
+
+		try {
+			String dirName ="MyneSweeper";
+			File file = new File(dirName);
+			if(!file.exists())
+				file.mkdir();
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+		}
 
 		Object[] options = {"easy (" + Data.easyRows + "x" + Data.easyCols + ", " + Data.easyNumMines + " mines)",
 							"medium (" + Data.medRows + "x" + Data.medCols + ", " + Data.medNumMines + " mines)",
