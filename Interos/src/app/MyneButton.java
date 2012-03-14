@@ -6,6 +6,7 @@ import javax.swing.JButton;
 
 class MyneButton extends JButton {
 
+	private static final long serialVersionUID = 676400594713114617L;
 	protected boolean hasMine;
 	protected int proximity;
 	protected int id;

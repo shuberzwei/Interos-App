@@ -10,6 +10,8 @@ import javax.swing.JPanel;
  *
  */
 class MynePanel extends JPanel {
+
+	private static final long serialVersionUID = 1167822343490399430L;
 	private static MyneButton[] buttons;
 
 	/**
@@ -65,7 +67,7 @@ class MynePanel extends JPanel {
 		for(int i = 0; i < Data.rows * Data.cols; i++) {
 			buttonString += buttons[i].hasMine + " ";
 			buttonString += buttons[i].proximity + " ";
-			buttonString += buttons[i].isEnabled() + " ";
+			buttonString += buttons[i].isEnabled() + "\n";
 		}
 		return buttonString;
 	}

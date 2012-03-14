@@ -24,8 +24,16 @@ class MyneButtonListener implements ActionListener{
 		return isFirstClick;
 	}
 
+	protected static void setIsFirstClick(boolean isFirstClickIn) {
+		isFirstClick = isFirstClickIn;
+	}
+	
 	protected static int getNumClicks() {
 		return numClicks;
+	}
+	
+	protected static void setNumClicks(int numClicksIn) {
+		numClicks = numClicksIn;
 	}
 	
 	@Override
@@ -140,7 +148,7 @@ class MyneButtonListener implements ActionListener{
 	 * 
 	 * @param button
 	 */
-	private void depressButtons(MyneButton button) { //TODO depress buttons on the diagonal?
+	private void depressButtons(MyneButton button) {
 		if(button.isEnabled()) {
 			button.setEnabled(false);
 			numClicks++;
@@ -192,7 +200,12 @@ class MyneButtonListener implements ActionListener{
 		Random rand = new Random();
 		for(int i = 0; i < Data.numMines; i++) {
 			int pos = rand.nextInt(Data.rows * Data.cols);
-			if(mines.contains(pos) || pos == Integer.parseInt(e.getActionCommand())) //e.getActionCommand() is button number
+			int buttonNumber = Integer.parseInt(e.getActionCommand());
+			//first click is not adjacent to or on top of mine
+			if(mines.contains(pos) ||
+					pos == buttonNumber - Data.cols - 1 || pos == buttonNumber - Data.cols || pos == buttonNumber - Data.cols + 1 || 
+					pos == buttonNumber - 1 || pos == buttonNumber || pos == buttonNumber + 1 ||
+					pos == buttonNumber + Data.cols - 1 || pos == buttonNumber + Data.cols || pos == buttonNumber + Data.cols + 1)
 				i--;
 			else
 				mines.add(pos);

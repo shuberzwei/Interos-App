@@ -8,6 +8,9 @@ import javax.swing.JOptionPane;
 
 
 public class Driver extends Applet {
+
+	private static final long serialVersionUID = 8921126247728231838L;
+
 	public static void main(String[] args) {
 
 		try {

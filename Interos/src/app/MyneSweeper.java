@@ -1,6 +1,7 @@
 package app;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -13,9 +14,11 @@ import java.io.FileWriter;
 import java.io.InputStreamReader;
 
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 /**
@@ -23,13 +26,15 @@ import javax.swing.KeyStroke;
  *
  */
 public class MyneSweeper extends JFrame {
+
+	private static final long serialVersionUID = -8048346619219793881L;
 	private String gameData;
 
 	/**
 	 * Constructs a frame and adds a panel.
 	 */
 	MyneSweeper(String difficulty) {
-		gameData = difficulty;		
+		gameData = difficulty;
 		this.setData(difficulty);
 		this.setTitle("MyneSweeper");
 		int frameWidth = Data.cols * 40;
@@ -46,7 +51,7 @@ public class MyneSweeper extends JFrame {
 	}
 
 	/**
-	 * Creates a basic menu with New, Open, Save, Options, Quit, and Help menu items.
+	 * Creates a basic menu with New, Open, Save, Quit, and Help menu items.
 	 * 
 	 * @return the menu
 	 */
@@ -92,15 +97,17 @@ public class MyneSweeper extends JFrame {
 		
 		file.addSeparator();
 		
+/* TODO
 		JMenuItem optionsItem = new JMenuItem("Options");
 		optionsItem.addActionListener(
 				new ActionListener( ){
 					public void actionPerformed(ActionEvent e) {
-						System.out.println("Options"); //TODO
+						
 					}
 				}
 			);
 		file.add(optionsItem);
+*/
 		
 		JMenuItem quitItem = new JMenuItem("Quit", KeyEvent.VK_Q);
 		quitItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -120,7 +127,7 @@ public class MyneSweeper extends JFrame {
 		aboutItem.addActionListener(
 				new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						//TODO System.out.println("About");
+						openREADME();
 					}
 				}
 			);
@@ -140,8 +147,8 @@ public class MyneSweeper extends JFrame {
 			FileWriter fstream = new FileWriter("MyneSweeper/savedGame.txt");
 			BufferedWriter out = new BufferedWriter(fstream);
 			if(!MyneButtonListener.isFirstClick()) { //if game was started, add state data
-				gameData += "&" + MynePanel.buttonsToString();
-				gameData += "&" + MyneButtonListener.getNumClicks();
+				gameData += "\n" + MynePanel.buttonsToString();
+				gameData += MyneButtonListener.getNumClicks();
 			}
 			out.write(gameData); //write difficulty, button states, numClicks
 			out.close();
@@ -150,23 +157,82 @@ public class MyneSweeper extends JFrame {
 		}
 	}
 	
+	/**
+	 * Opens a saved game file and restores game state.
+	 */
 	private void openGame() {
-		//TODO
 		try {
-			File file = new File("MyneSweeper/out.txt");
+			File file = new File("MyneSweeper/savedGame.txt");
 			if(file.exists()) {
 				FileInputStream fstream = new FileInputStream(file);
 				DataInputStream in = new DataInputStream(fstream);
 				BufferedReader br = new BufferedReader(new InputStreamReader(in));
 				
-				String line;
-				while ((line = br.readLine()) != null) {
-					//set difficulty, if game was started then restore buttons array, set isFirstClick and NumClicks
+				//reset difficulty
+				String line = br.readLine();
+				int endIndex = line.indexOf(' ');
+				String difficulty = line.substring(0, endIndex);
+				setData(difficulty);
+				
+				if((line = br.readLine()) != null) { //game was started
+					//restore buttons array
+					for(int i = 0; i < Data.rows * Data.cols; i++) {
+						String[] buttonData = line.split(" ");
+						MynePanel.getButton(i).hasMine = Boolean.parseBoolean(buttonData[0]);
+						MynePanel.getButton(i).proximity = Integer.parseInt(buttonData[1]);
+						MynePanel.getButton(i).setEnabled(Boolean.parseBoolean(buttonData[2]));
+						if(MynePanel.getButton(i).proximity != 0 && !MynePanel.getButton(i).isEnabled()) {
+							JLabel label = new JLabel("" + MynePanel.getButton(i).proximity);
+							int fontSize = 20;//TODO change size to match frame
+							label.setFont(new Font(Font.SANS_SERIF, Font.BOLD, fontSize));
+							label.setAlignmentX(JLabel.CENTER_ALIGNMENT);
+							label.setAlignmentY(JLabel.CENTER_ALIGNMENT);
+							
+							//TODO max size of the label is what will fit in button
+							int minWidth = (int) (label.getFontMetrics(label.getFont()).getStringBounds(label.getText(), null).getWidth());
+							int minHeight = (int) (label.getFontMetrics(label.getFont()).getStringBounds(label.getText(), null).getHeight());
+							Dimension min = new Dimension(minWidth, minHeight);
+							label.setMinimumSize(min);
+							label.setPreferredSize(min);
+
+							MynePanel.getButton(i).add(label);
+							MynePanel p = (MynePanel) MynePanel.getButton(i).getParent();
+							p.validate();
+						}
+						line = br.readLine();
+					}
+					MyneButtonListener.setIsFirstClick(false);
+					MyneButtonListener.setNumClicks(Integer.parseInt(line));
 				}
 				in.close();
 			} else {
-				//error dialog
+				JOptionPane.showMessageDialog(this,
+						"No saved game to load.",
+						"No Save Data",
+						JOptionPane.WARNING_MESSAGE);
 			}
+		} catch (Exception e) {
+			System.err.println("Error: " + e.getMessage());
+		}
+	}
+	
+	private void openREADME() {
+		try {
+			File file = new File("README");
+
+			FileInputStream fstream = new FileInputStream(file);
+			DataInputStream in = new DataInputStream(fstream);
+			BufferedReader br = new BufferedReader(new InputStreamReader(in));
+			String content = " ";
+			String line;
+			while((line = br.readLine()) != null) {
+				content += line + '\n';
+			}
+			JOptionPane.showMessageDialog(this,
+					content,
+					"About",
+					JOptionPane.INFORMATION_MESSAGE);
+
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 		}
